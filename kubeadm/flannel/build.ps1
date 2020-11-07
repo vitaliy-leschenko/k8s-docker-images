@@ -1,7 +1,7 @@
 param(
     [string] $BuildID = "", 
     [switch] $Push, 
-    [string] $Image = "test/flannel",
+    [string] $Image = "vleschenko/test-flannel",
     [string] $cniVersion = "0.8.7"
 )
 

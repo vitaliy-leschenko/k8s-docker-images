@@ -1,0 +1,1 @@
+docker build -f .\Dockerfile -t "flannel:1809" --build-arg=flannelVersion=0.13.0 --build-arg=tag=1809 .

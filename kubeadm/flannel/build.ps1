@@ -65,3 +65,7 @@ $data.flannel | %{
         }
     }
 }
+
+Write-Host ''
+Write-Host ''
+& docker images

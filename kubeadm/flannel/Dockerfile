@@ -5,8 +5,9 @@ ARG flannelVersion="0.13.0"
 FROM --platform=linux/amd64 golang as setup
 ENV GOOS=windows
 ENV GOARCH=amd64
-ADD setup.go build/
-RUN go build -o build/setup.exe build/setup.go
+WORKDIR /build
+ADD setup.go .
+RUN go build -o setup.exe setup.go
 
 FROM --platform=linux/amd64 ubuntu as bins
 ARG flannelVersion
@@ -29,7 +30,7 @@ RUN curl -Lo C:\utils\yq.exe https://github.com/mikefarah/yq/releases/download/2
 FROM $BASE
 
 ADD hns.psm1 /k/flannel/hns.psm1
-COPY --from=setup /gopath/build/setup.exe /k/flannel/setup.exe
+COPY --from=setup /build/setup.exe /k/flannel/setup.exe
 COPY --from=bins /flannel/flanneld.exe /k/flannel/flanneld.exe
 COPY --from=bins /cni /cni
 COPY --from=bins /utils /utils

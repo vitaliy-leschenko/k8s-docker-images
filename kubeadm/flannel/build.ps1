@@ -50,7 +50,7 @@ $data.flannel | %{
             $cmd = "$cmd --amend $($Image):$($flannel)-$($tag)$($id)"
 
             Write-Host "$($base):$tag"
-            & docker buildx build --pull --platform windows/amd64 --output=type=registry -f $dockerfile -t "$($Image):$($flannel)-$($tag)$($id)" --build-arg=tag=$tag .
+            & docker buildx build --pull --platform windows/amd64 --output=type=docker -f $dockerfile -t "$($Image):$($flannel)-$($tag)$($id)" --build-arg=tag=$tag .
             if ($Push.IsPresent) {
                 & docker push "$($Image):$($flannel)-$($tag)$($id)"
             }

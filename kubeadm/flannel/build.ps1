@@ -6,6 +6,8 @@ param(
 )
 
 $env:DOCKER_CLI_EXPERIMENTAL = "enabled"
+& docker buildx create --name img-builder --use
+
 $env:GOOS = "windows"
 $env:GOARCH = "amd64"
 & go build -o setup.exe setup.go
@@ -51,7 +53,7 @@ $data.flannel | %{
             $cmd = "$cmd --amend $($Image):$($flannel)-$($tag)$($id)"
 
             Write-Host "$($base):$tag"
-            & docker buildx build --pull --platform windows/amd64 -f $dockerfile -t "$($Image):$($flannel)-$($tag)$($id)" --build-arg=tag=$tag .
+            & docker buildx build --pull --platform windows/amd64 -f $dockerfile -t "$($Image):$($flannel)-$($tag)$($id)" --build-arg=BASE="$($base):$($tag)" .
             if ($Push.IsPresent) {
                 & docker push "$($Image):$($flannel)-$($tag)$($id)"
             }

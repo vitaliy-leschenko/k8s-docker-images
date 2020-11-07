@@ -1,6 +1,5 @@
-ARG tag="ltsc2019"
-
-FROM mcr.microsoft.com/windows/servercore:${tag}
+ARG BASE="mcr.microsoft.com/windows/servercore:1809"
+FROM $BASE
 
 ADD hns.psm1 /k/flannel
 ADD setup.exe /k/flannel

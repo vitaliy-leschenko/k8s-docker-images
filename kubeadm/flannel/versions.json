@@ -4,7 +4,7 @@
     ],
     "baseimages": [
         {
-            "dockerfile": "Dockerfile.nanoserver",
+            "dockerfile": "Dockerfile",
             "suffix": "-nanoserver",
             "base": "mcr.microsoft.com/powershell",
             "tags": ["nanoserver-1809"]

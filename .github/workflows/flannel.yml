@@ -9,6 +9,7 @@ jobs:
     defaults:
       run:
         shell: pwsh
+        working-directory: ./kubeadm/flannel
     steps:
     - uses: actions/checkout@v2
     - uses: azure/docker-login@v1
@@ -16,4 +17,4 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_SECRET }}
     - name: Build images
-      run: cd ./kubeadm/flannel && ./build.ps1
+      run: ./build.ps1 -BuildID $env:GITHUB_RUN_ID

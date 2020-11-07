@@ -1,0 +1,15 @@
+name: flannel-images
+
+on:
+  push:
+
+jobs:
+  build:
+    runs-on: windows-2019
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build images
+      run: .\build.ps1

@@ -1,4 +1,4 @@
-ARG tag="1809"
+ARG tag="nanoserver-1809"
 FROM mcr.microsoft.com/powershell:${tag}
 
 SHELL ["pwsh", "-NoLogo", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]

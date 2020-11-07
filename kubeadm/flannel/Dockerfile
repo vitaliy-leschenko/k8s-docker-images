@@ -1,7 +1,6 @@
 ARG tag="ltsc2019"
 
 FROM mcr.microsoft.com/windows/servercore:${tag}
-SHELL ["powershell", "-NoLogo", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
 
 ADD hns.psm1 /k/flannel
 ADD setup.exe /k/flannel

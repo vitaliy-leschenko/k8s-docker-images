@@ -41,7 +41,7 @@ $data.flannel | %{
         $suffix = $_.suffix
         $dockerfile = $_.dockerfile
 
-        Write-Host "sigwindowstools/flannel:$($flannel)$($suffix)"
+        Write-Host "$($Image):$($flannel)$($suffix)"
 
         $cmd = "docker manifest create $($Image):$($flannel)$($suffix)"
 

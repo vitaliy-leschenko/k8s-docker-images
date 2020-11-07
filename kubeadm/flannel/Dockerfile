@@ -2,13 +2,13 @@ ARG BASE="mcr.microsoft.com/powershell:nanoserver-1809"
 ARG cniVersion="0.8.7"
 ARG flannelVersion="0.13.0"
 
-FROM golang as setup
+FROM --platform=linux/amd64 golang as setup
 ENV GOOS=windows
 ENV GOARCH=amd64
 ADD setup.go build/
 RUN go build -o build/setup.exe build/setup.go
 
-FROM ubuntu as bins
+FROM --platform=linux/amd64 ubuntu as bins
 ARG flannelVersion
 ARG cniVersion
 

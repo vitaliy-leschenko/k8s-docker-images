@@ -9,8 +9,7 @@ jobs:
     defaults:
       run:
         shell: pwsh
-        working-directory: kubeadm/flannel
     steps:
     - uses: actions/checkout@v2
     - name: Build images
-      run: .\build.ps1
+      run: ./kubeadm/flannel/build.ps1

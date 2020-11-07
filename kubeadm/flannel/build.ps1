@@ -25,8 +25,8 @@ popd
 Write-Host "Download utils..."
 New-Item utils -Type Directory -Force | Out-Null
 pushd utils
-curl.exe -Lo wins.exe https://github.com/rancher/wins/releases/download/v0.0.4/wins.exe
-curl.exe -Lo yq.exe https://github.com/mikefarah/yq/releases/download/2.4.1/yq_windows_amd64.exe
+curl -Lo wins.exe https://github.com/rancher/wins/releases/download/v0.0.4/wins.exe
+curl -Lo yq.exe https://github.com/mikefarah/yq/releases/download/2.4.1/yq_windows_amd64.exe
 popd
 
 $data = Get-Content .\versions.json | ConvertFrom-Json

@@ -12,6 +12,8 @@ FROM --platform=linux/amd64 ubuntu as bins
 ARG flannelVersion
 ARG cniVersion
 
+RUN apt-get update && apt-get install curl -y
+
 WORKDIR /flannel 
 RUN curl -Lo flanneld.exe https://github.com/coreos/flannel/releases/download/v${flannelVersion}/flanneld.exe
 

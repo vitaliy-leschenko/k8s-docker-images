@@ -18,3 +18,5 @@ jobs:
         password: ${{ secrets.DOCKER_SECRET }}
     - name: Build images
       run: ./build.ps1 -BuildID $env:GITHUB_RUN_ID
+    - name: View images
+      run: docker images

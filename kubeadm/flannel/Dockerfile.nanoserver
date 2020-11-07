@@ -1,0 +1,12 @@
+ARG tag="1809"
+
+FROM mcr.microsoft.com/powershell:${tag}
+SHELL ["pwsh", "-NoLogo", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
+
+ADD hns.psm1 /k/flannel/hns.psm1
+ADD setup.exe /k/flannel/setup.exe
+ADD flanneld.exe /k/flannel/flanneld.exe
+ADD cni /cni
+ADD utils /utils
+
+ENV PATH="C:\Program Files\PowerShell;C:\utils;C:\Windows\system32;C:\Windows;"

@@ -5,10 +5,11 @@ on:
 
 jobs:
   build:
-    runs-on: windows-2019
+    runs-on: ubuntu-20.04
     defaults:
       run:
         shell: pwsh
+        working-directory: kubeadm/flannel
     steps:
     - uses: actions/checkout@v2
     - name: Build images

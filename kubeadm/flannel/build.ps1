@@ -1,4 +1,4 @@
-get-location
+set-location ./kubeadm/flannel
 
 $env:GOOS = "windows"
 $env:GOARCH = "amd64"

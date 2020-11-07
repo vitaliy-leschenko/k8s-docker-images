@@ -13,7 +13,7 @@ ARG flannelVersion
 ARG cniVersion
 
 WORKDIR /flannel 
-RUN curl -LO https://github.com/coreos/flannel/releases/download/v${flannelVersion}/flanneld.exe
+RUN curl -Lo flanneld.exe https://github.com/coreos/flannel/releases/download/v${flannelVersion}/flanneld.exe
 
 WORKDIR /cni
 RUN curl -Lo cni.tgz https://github.com/containernetworking/plugins/releases/download/v${cniVersion}/cni-plugins-windows-amd64-v${cniVersion}.tgz

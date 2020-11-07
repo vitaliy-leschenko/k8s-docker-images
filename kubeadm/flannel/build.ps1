@@ -1,7 +1,6 @@
 param(
-    [string] $BuildID = "", 
     [switch] $Push, 
-    [string] $Image = "vleschenko/test-flannel",
+    [string] $Image = "sigwindowstools/flannel",
     [string] $cniVersion = "0.8.7"
 )
 
@@ -11,11 +10,6 @@ $env:DOCKER_CLI_EXPERIMENTAL = "enabled"
 $env:GOOS = "windows"
 $env:GOARCH = "amd64"
 & go build -o setup.exe setup.go
-
-$id = "";
-if ($BuildID -ne "") {
-    $id = "-$BuildID"
-}
 
 Write-Host "Download 'CNI' version: $cniVersion"
 New-Item cni -Type Directory -Force | Out-Null
@@ -31,6 +25,12 @@ pushd utils
 curl -Lo wins.exe https://github.com/rancher/wins/releases/download/v0.0.4/wins.exe
 curl -Lo yq.exe https://github.com/mikefarah/yq/releases/download/2.4.1/yq_windows_amd64.exe
 popd
+
+$output="docker"
+if ($Push.IsPresent) {
+    $output="registry"
+}
+
 
 $data = Get-Content .\versions.json | ConvertFrom-Json
 $data.flannel | %{
@@ -50,13 +50,10 @@ $data.flannel | %{
         $_.tags | %{
             $tag = $_
 
-            $cmd = "$cmd --amend $($Image):$($flannel)-$($tag)$($id)"
+            $cmd = "$cmd --amend $($Image):$($flannel)-$($tag)"
 
             Write-Host "$($base):$tag"
-            & docker buildx build --pull --platform windows/amd64 --output=type=registry -f $dockerfile -t "$($Image):$($flannel)-$($tag)$($id)" --build-arg=BASE="$($base):$($tag)" .
-            if ($Push.IsPresent) {
-                & docker push "$($Image):$($flannel)-$($tag)$($id)"
-            }
+            & docker buildx build --pull --platform windows/amd64 --output=type=$output -f $dockerfile -t "$($Image):$($flannel)-$($tag)" --build-arg=BASE="$($base):$($tag)" .
         }
 
         if ($Push.IsPresent) {
@@ -65,7 +62,3 @@ $data.flannel | %{
         }
     }
 }
-
-Write-Host ''
-Write-Host ''
-& docker images

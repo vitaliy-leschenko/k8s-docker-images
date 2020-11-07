@@ -1,6 +1,6 @@
 ARG BASE="mcr.microsoft.com/powershell:nanoserver-1809"
 ARG cniVersion="0.8.7"
-ARM flannelVersion="0.13.0"
+ARG flannelVersion="0.13.0"
 
 FROM golang as setup
 ENV GOOS=windows

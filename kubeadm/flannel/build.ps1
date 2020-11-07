@@ -5,7 +5,7 @@ param(
     [string] $cniVersion = "0.8.7"
 )
 
-$env:DOCKER_CLI_EXPERIMENTAL=enabled
+$env:DOCKER_CLI_EXPERIMENTAL = "enabled"
 $env:GOOS = "windows"
 $env:GOARCH = "amd64"
 & go build -o setup.exe setup.go

@@ -14,6 +14,7 @@ jobs:
     - name: Build images
       run: |
         $env:DOCKER_CLI_EXPERIMENTAL = "enabled"
+        echo ${{ secrets.DOCKER_SECRET }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
         cd ~/.docker
         ls -a -l
         mkdir manifests

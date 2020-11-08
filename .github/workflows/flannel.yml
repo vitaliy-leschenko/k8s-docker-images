@@ -17,6 +17,4 @@ jobs:
         password: ${{ secrets.DOCKER_SECRET }}
     - name: Build images
       run: |
-        cd ~/.docker
-        ls
-        get-content config.json
+        ls /etc/docker

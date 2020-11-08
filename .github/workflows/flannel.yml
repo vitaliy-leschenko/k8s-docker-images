@@ -11,10 +11,6 @@ jobs:
         shell: pwsh
     steps:
     - uses: actions/checkout@v2
-    - uses: azure/docker-login@v1
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_SECRET }}
     - name: Build images
       run: |
         $env:DOCKER_CLI_EXPERIMENTAL = "enabled"
@@ -24,4 +20,6 @@ jobs:
         docker manifest create vleschenko/flannel:0.13.0 --amend vleschenko/flannel:0.13.0-nanoserver-1809 --amend vleschenko/flannel:0.13.0-nanoserver-1903 --amend vleschenko/flannel:0.13.0-nanoserver-1909 --amend vleschenko/flannel:0.13.0-nanoserver-2004
         cd manifests
         ls -a -l
+        docker info
+        docker version
 

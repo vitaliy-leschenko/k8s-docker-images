@@ -35,22 +35,20 @@ $data.flannel | %{
         }
 
         if ($Push.IsPresent) {
+            Write-Host $cmd
             Invoke-Expression $cmd
 
-            & ls ~/.docker -a -l
-
             $_.tags | %{
-                $manifest = $(docker manifest inspect $($base):$($tag) -v) | ConvertFrom-Json
+                $tag = $_
+                Write-Host "$($base):$($tag)"
+                [string] $data = $(docker manifest inspect "$($base):$($tag)" -v)
+                $manifest = $data | ConvertFrom-Json
                 $platform = $manifest.Descriptor.platform
-
                 $folder = ("docker.io/$($Image):$($flannel)$($suffix)" -replace "/", "_") -replace ":", "-"
                 $img = ("docker.io/$($Image):$($flannel)-$($tag)" -replace "/", "_") -replace ":", "-"
-
                 Write-Host "Update '~/.docker/manifests/$folder/$img'"
-
                 $manifest = Get-Content "~/.docker/manifests/$folder/$img" | ConvertFrom-Json
                 $manifest.Descriptor.platform = $platform
-
                 $manifest | ConvertTo-Json -Depth 10 -Compress | Set-Content "~/.docker/manifests/$folder/$img"
             }
 

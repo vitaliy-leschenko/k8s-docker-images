@@ -12,21 +12,20 @@ if ($Push.IsPresent) {
 }
 
 $data = Get-Content .\versions.json | ConvertFrom-Json
-$data.flannel | %{
-    $flannel = $_
-
-    $data.baseimages | %{
-        $base = $_.base
-        $suffix = $_.suffix
-        $dockerfile = $_.dockerfile
+foreach ($flannel in $data.flannel)
+{
+    foreach ($template in $data.baseimages)
+    {
+        $base = $template.base
+        $suffix = $template.suffix
+        $dockerfile = $template.dockerfile
 
         Write-Host "$($Image):$($flannel)$($suffix)"
 
         $cmd = "docker manifest create $($Image):$($flannel)$($suffix)"
 
-        $_.tags | %{
-            $tag = $_
-
+        foreach ($tag in $template.tags)
+        {
             $cmd = "$cmd --amend $($Image):$($flannel)-$($tag)"
 
             Write-Host "$($base):$tag"
@@ -37,9 +36,8 @@ $data.flannel | %{
             Write-Host $cmd
             Invoke-Expression $cmd
 
-            $_.tags | %{
-                $tag = $_
-                Write-Host "$($base):$($tag)"
+            foreach ($tag in $template.tags)
+            {
                 [string] $data = $(docker manifest inspect "$($base):$($tag)" -v)
                 $manifest = $data | ConvertFrom-Json
                 $platform = $manifest.Descriptor.platform

@@ -18,3 +18,4 @@ jobs:
     - name: Build images
       run: |
         ls /etc/docker
+        get-content /etc/docker/daemon.json

@@ -36,3 +36,4 @@ COPY --from=bins /cni /cni
 COPY --from=bins /utils /utils
 
 ENV PATH="C:\Program Files\PowerShell;C:\utils;C:\Windows\system32;C:\Windows;"
+USER ContainerAdministrator

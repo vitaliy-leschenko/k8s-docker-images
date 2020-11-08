@@ -17,6 +17,7 @@ jobs:
         password: ${{ secrets.DOCKER_SECRET }}
     - name: Build images
       run: |
+        $env:DOCKER_CLI_EXPERIMENTAL = "enabled"
         cd ~/.docker
         ls -a -l
         mkdir manifests

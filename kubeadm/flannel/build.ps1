@@ -4,6 +4,7 @@ param(
 )
 
 $env:DOCKER_CLI_EXPERIMENTAL = "enabled"
+& docker version
 & docker buildx create --name img-builder --use
 
 $output="docker"

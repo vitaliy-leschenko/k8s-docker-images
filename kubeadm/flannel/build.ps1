@@ -35,6 +35,13 @@ $data.flannel | %{
 
         if ($Push.IsPresent) {
             Invoke-Expression $cmd
+
+            $_.tags | %{
+                $manifest = $(docker manifest inspect $($base):$($tag) -v) | ConvertFrom-Json
+                $osVersion = $manifest.Descriptor.platform.'os.version'
+                & docker manifest annotate --os-version $osVersion $($Image):$($flannel)$($suffix) $($Image):$($flannel)-$($tag)
+            }
+
             & docker manifest push "$($Image):$($flannel)$($suffix)"
         }
     }

@@ -41,8 +41,7 @@ foreach ($flannel in $data.flannel)
 
             foreach ($tag in $template.tags)
             {
-                [string] $data = $(docker manifest inspect "$($base):$($tag)" -v)
-                $manifest = $data | ConvertFrom-Json
+                $manifest = $(docker manifest inspect "$($base):$($tag)" -v) | ConvertFrom-Json
                 $platform = $manifest.Descriptor.platform
                 $folder = ("docker.io/$($Image):$($flannel)$($suffix)" -replace "/", "_") -replace ":", "-"
                 $img = ("docker.io/$($Image):$($flannel)-$($tag)" -replace "/", "_") -replace ":", "-"

@@ -12,8 +12,11 @@ if ($Push.IsPresent) {
 }
 
 $data = Get-Content .\versions.json | ConvertFrom-Json
+$data.flannel
 foreach ($flannel in $data.flannel)
 {
+    Write-Host "Build images for flannel version: $flannel"
+
     foreach ($template in $data.baseimages)
     {
         $base = $template.base

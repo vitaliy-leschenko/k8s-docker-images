@@ -36,7 +36,7 @@ $data.flannel | %{
         if ($Push.IsPresent) {
             Invoke-Expression $cmd
 
-            & ls "$(HOME)/.docker/manifests" -l
+            & ls "$HOME/.docker/manifests" -l
 
             $_.tags | %{
                 $manifest = $(docker manifest inspect $($base):$($tag) -v) | ConvertFrom-Json

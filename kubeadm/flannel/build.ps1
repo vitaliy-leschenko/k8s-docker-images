@@ -38,8 +38,15 @@ $data.flannel | %{
 
             $_.tags | %{
                 $manifest = $(docker manifest inspect $($base):$($tag) -v) | ConvertFrom-Json
-                $osVersion = $manifest.Descriptor.platform.'os.version'
-                & docker manifest annotate --os-version $osVersion $($Image):$($flannel)$($suffix) $($Image):$($flannel)-$($tag)
+                $platform = $manifest.Descriptor.platform
+
+                $folder = ("docker.io/$($Image):$($flannel)$($suffix)" -replace "/", "_") -replace ":", "-"
+                $img = ("docker.io/$($Image):$($flannel)-$($tag)" -replace "/", "_") -replace ":", "-"
+
+                $manifest = Get-Content "${HOME}/.docker/manifests/$folder/$img" | ConvertFrom-Json
+                $manifest.Descriptor.platform = $platform
+
+                $manifest | ConvertTo-Json -Depth 10 -Compress | Set-Content "${HOME}/.docker/manifests/$folder/$img"
             }
 
             & docker manifest push "$($Image):$($flannel)$($suffix)"

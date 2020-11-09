@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - "kubeadm/flannel/**"
+      - ".github/workflows/flannel.yml"
 
 jobs:
   build:

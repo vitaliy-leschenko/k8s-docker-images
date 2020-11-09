@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - "kubeadm/kube-proxy/**"
+      - ".github/workflows/kubeproxy.yml"
 
 jobs:
   build:

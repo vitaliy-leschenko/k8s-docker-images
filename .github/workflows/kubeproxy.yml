@@ -2,6 +2,8 @@ name: kube-proxy-images
 
 on:
   push:
+    paths:
+      - "kubeadm/kube-proxy/**"
 
 jobs:
   build:

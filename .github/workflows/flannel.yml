@@ -2,6 +2,8 @@ name: flannel-images
 
 on:
   push:
+    paths:
+      - "kubeadm/flannel/**"
 
 jobs:
   build:

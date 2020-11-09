@@ -4,7 +4,8 @@ param(
 )
 
 [int]$minMajor = 1
-[int]$minMinor = 17
+[int]$minMinor = 19
+[int]$minBuild = 3
 
 $env:DOCKER_CLI_EXPERIMENTAL = "enabled"
 & docker buildx create --name img-builder --use
@@ -38,8 +39,9 @@ foreach($tag in $tags)
     {
         [int]$major = $Matches[1]
         [int]$minor = $Matches[2]
+        [int]$build = $Matches[3]
 
-        if (($major -gt $minMajor) -or ($major -eq $minMajor -and $minor -ge $minMinor))
+        if (($major -gt $minMajor) -or ($major -eq $minMajor -and $minor -gt $minMinor) -or ($major -eq $minMajor -and $minor -eq $minMinor -and $build -gt $minBuild))
         {
             buildKubeProxy -tag $tag
         }

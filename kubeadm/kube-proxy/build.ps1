@@ -22,13 +22,35 @@ function buildKubeProxy([string]$tag)
 
     $versions = Get-Content ".\buildconfig.json" | ConvertFrom-Json
     $base = $versions.baseimage
+    $cmd = "docker manifest create $($image):$tag"
     foreach($map in $versions.tagsMap) 
     {
+        $cmd = "$cmd --amend $($image):$tag-$($map.target)"
         Write-Host "Build $($image):$tag-$($map.target)" -ForegroundColor Green
         & docker buildx build --pull --platform windows/amd64 --output=type=$output -f Dockerfile -t "$($image):$tag-$($map.target)" --build-arg=BASE="$($base):$($map.source)" --build-arg=flannelVersion=$flannel .
     }
 
-    Write-Host "todo: Create manifest for $($image):$tag" -ForegroundColor Yellow
+    if ($push.IsPresent)
+    {
+        Write-Host "Create manifest for $($image):$tag" -ForegroundColor Yellow
+        Write-Host $cmd
+        Invoke-Expression $cmd
+
+        foreach($map in $versions.tagsMap) 
+        {
+            $manifest = $(docker manifest inspect "$($base):$($map.source)" -v) | ConvertFrom-Json
+            $platform = $manifest.Descriptor.platform
+            $folder = ("docker.io/$($image):$tag" -replace "/", "_") -replace ":", "-"
+            $img = ("docker.io/$($image):$tag-$($map.target)" -replace "/", "_") -replace ":", "-"
+            Write-Host "Update '~/.docker/manifests/$folder/$img'"
+            $manifest = Get-Content "~/.docker/manifests/$folder/$img" | ConvertFrom-Json
+            $manifest.Descriptor.platform = $platform
+            $manifest | ConvertTo-Json -Depth 10 -Compress | Set-Content "~/.docker/manifests/$folder/$img"
+        }
+
+        & docker manifest push "$($image):$tag"
+    }
+
     Write-Host
 }
 

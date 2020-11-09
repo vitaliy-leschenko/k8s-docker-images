@@ -4,7 +4,7 @@ param(
 )
 
 [int]$minMajor = 1
-[int]$minMinor = 19
+[int]$minMinor = 17
 [int]$minBuild = 0
 
 $env:DOCKER_CLI_EXPERIMENTAL = "enabled"
@@ -20,14 +20,14 @@ function buildKubeProxy([string]$tag)
 {
     Write-Host "-------------- $tag ---------------" -ForegroundColor White
 
-    $versions = Get-Content ".\buildconfig.json" | ConvertFrom-Json
-    $base = $versions.baseimage
+    $config = Get-Content ".\buildconfig.json" | ConvertFrom-Json
+    $base = $config.baseimage
     $cmd = "docker manifest create $($image):$tag"
-    foreach($map in $versions.tagsMap) 
+    foreach($map in $config.tagsMap) 
     {
         $cmd = "$cmd --amend $($image):$tag-$($map.target)"
         Write-Host "Build $($image):$tag-$($map.target)" -ForegroundColor Green
-        & docker buildx build --pull --platform windows/amd64 --output=type=$output -f Dockerfile -t "$($image):$tag-$($map.target)" --build-arg=BASE="$($base):$($map.source)" --build-arg=flannelVersion=$flannel .
+        & docker buildx build --pull --platform windows/amd64 --output=type=$output -f Dockerfile -t "$($image):$tag-$($map.target)" --build-arg=BASE="$($base):$($map.source)" --build-arg=k8sVersion=$tag .
     }
 
     if ($push.IsPresent)
@@ -36,7 +36,7 @@ function buildKubeProxy([string]$tag)
         Write-Host $cmd
         Invoke-Expression $cmd
 
-        foreach($map in $versions.tagsMap) 
+        foreach($map in $config.tagsMap) 
         {
             $manifest = $(docker manifest inspect "$($base):$($map.source)" -v) | ConvertFrom-Json
             $platform = $manifest.Descriptor.platform

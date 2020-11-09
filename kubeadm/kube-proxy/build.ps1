@@ -25,7 +25,7 @@ function buildKubeProxy([string]$tag)
     foreach($map in $versions.tagsMap) 
     {
         Write-Host "Build $($image):$tag-$($map.target)" -ForegroundColor Green
-        & docker buildx build --pull --platform windows/amd64 --output=type=$output -f .\Dockerfile -t "$($image):$tag-$($map.target)" --build-arg=BASE="$($base):$($map.source)" --build-arg=flannelVersion=$flannel .
+        & docker buildx build --pull --platform windows/amd64 --output=type=$output -f Dockerfile -t "$($image):$tag-$($map.target)" --build-arg=BASE="$($base):$($map.source)" --build-arg=flannelVersion=$flannel .
     }
 
     Write-Host "todo: Create manifest for $($image):$tag" -ForegroundColor Yellow

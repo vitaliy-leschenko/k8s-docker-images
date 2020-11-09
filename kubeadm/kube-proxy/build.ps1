@@ -41,7 +41,7 @@ foreach($tag in $tags)
         [int]$minor = $Matches[2]
         [int]$build = $Matches[3]
 
-        if (($major -gt $minMajor) -or ($major -eq $minMajor -and $minor -gt $minMinor) -or ($major -eq $minMajor -and $minor -eq $minMinor -and $build -gt $minBuild))
+        if (($major -gt $minMajor) -or ($major -eq $minMajor -and $minor -gt $minMinor) -or ($major -eq $minMajor -and $minor -eq $minMinor -and $build -ge $minBuild))
         {
             buildKubeProxy -tag $tag
         }

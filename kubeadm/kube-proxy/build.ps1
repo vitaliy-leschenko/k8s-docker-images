@@ -5,7 +5,7 @@ param(
 
 [int]$minMajor = 1
 [int]$minMinor = 19
-[int]$minBuild = 3
+[int]$minBuild = 0
 
 $env:DOCKER_CLI_EXPERIMENTAL = "enabled"
 & docker buildx create --name img-builder --use

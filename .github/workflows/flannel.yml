@@ -29,8 +29,8 @@ jobs:
       if: ${{ github.event_name == 'push' }}
       run: |
         echo ${{ secrets.DOCKER_SECRET }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-        ./build.ps1 -push
+        ./build.ps1 -push -image vleschenko/flannel
     - name: Build images (without push)
       if: ${{ github.event_name == 'pull_request' }}
       run: |
-        ./build.ps1
+        ./build.ps1 -image vleschenko/flannel

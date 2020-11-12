@@ -7,48 +7,32 @@ param(
 [int]$minMinor = 17
 [int]$minBuild = 0
 
-$env:DOCKER_CLI_EXPERIMENTAL = "enabled"
-& docker buildx create --name img-builder --use
-
 $output="docker"
 if ($push.IsPresent) {
     $output="registry"
 }
 
+Import-Module "../buildx.psm1"
+Set-Builder
 
-function buildKubeProxy([string]$tag) 
+function Build-KubeProxy([string]$tag) 
 {
-    Write-Host "-------------- $tag ---------------" -ForegroundColor White
-
     $config = Get-Content ".\buildconfig.json" | ConvertFrom-Json
     $base = $config.baseimage
-    $cmd = "docker manifest create $($image):$tag"
+
+    [string[]]$items = @()
+    [string[]]$bases = @()
     foreach($map in $config.tagsMap) 
     {
-        $cmd = "$cmd --amend $($image):$tag-$($map.target)"
-        Write-Host "Build $($image):$tag-$($map.target)" -ForegroundColor Green
-        & docker buildx build --pull --platform windows/amd64 --output=type=$output -f Dockerfile -t "$($image):$tag-$($map.target)" --build-arg=BASE="$($base):$($map.source)" --build-arg=k8sVersion=$tag .
+        $bases += "$($base):$($map.source)"
+        $current = "$($image):$tag-$($map.target)"
+        $items += $current
+        New-Build -name $current -output $output -args @("BASE=$($base):$($map.source)", "k8sVersion=$tag")
     }
 
     if ($push.IsPresent)
     {
-        Write-Host "Create manifest for $($image):$tag" -ForegroundColor Yellow
-        Write-Host $cmd
-        Invoke-Expression $cmd
-
-        foreach($map in $config.tagsMap) 
-        {
-            $manifest = $(docker manifest inspect "$($base):$($map.source)" -v) | ConvertFrom-Json
-            $platform = $manifest.Descriptor.platform
-            $folder = ("docker.io/$($image):$tag" -replace "/", "_") -replace ":", "-"
-            $img = ("docker.io/$($image):$tag-$($map.target)" -replace "/", "_") -replace ":", "-"
-            Write-Host "Update '~/.docker/manifests/$folder/$img'"
-            $manifest = Get-Content "~/.docker/manifests/$folder/$img" | ConvertFrom-Json
-            $manifest.Descriptor.platform = $platform
-            $manifest | ConvertTo-Json -Depth 10 -Compress | Set-Content "~/.docker/manifests/$folder/$img"
-        }
-
-        & docker manifest push "$($image):$tag"
+        Add-Manifest -name "$($image):$tag" -items $items -bases $bases
     }
 
     Write-Host
@@ -65,7 +49,7 @@ foreach($tag in $tags)
 
         if (($major -gt $minMajor) -or ($major -eq $minMajor -and $minor -gt $minMinor) -or ($major -eq $minMajor -and $minor -eq $minMinor -and $build -ge $minBuild))
         {
-            buildKubeProxy -tag $tag
+            Build-KubeProxy -tag $tag
         }
     }
 }

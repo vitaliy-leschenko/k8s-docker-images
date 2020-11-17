@@ -17,7 +17,7 @@ function New-Build()
         [string[]]$args
     )
 
-    $command = "docker buildx build --pull --platform windows/amd64 --output=type=$output -f Dockerfile -t $name"
+    $command = "docker buildx build --platform windows/amd64 --output=type=$output -f Dockerfile -t $name"
     foreach($arg in $args)
     {
         $command = "$command --build-arg=$arg"

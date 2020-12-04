@@ -29,7 +29,10 @@ function New-Build()
 
 function Get-ManifestName([string]$name)
 {
-    if (($name -split "/").Length -gt 2) {
+    if (($name -split "/").Length -eq 1) {
+        $name = "library/$name"
+    }
+    if (($name -split "/").Length -eq 2) {
         $name = "docker.io/$name"
     }
     return ($name -replace "/", "_") -replace ":", "-"

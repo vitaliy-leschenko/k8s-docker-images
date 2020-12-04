@@ -38,6 +38,7 @@ function Get-ManifestName([string]$name)
 function Push-Manifest([string]$name, [string[]]$items, [string[]]$bases)
 {
     $folder = Get-ManifestName -name $name
+    Write-Host $folder
     if (Test-Path "~/.docker/manifests/$folder")
     {
         Write-Warning "Manifest $name already exists and will be overridden."
@@ -62,6 +63,7 @@ function Push-Manifest([string]$name, [string[]]$items, [string[]]$bases)
         $platform = $manifest.Descriptor.platform
 
         $img = Get-ManifestName -name $item
+        Write-Host $img
     
         $manifest = Get-Content "~/.docker/manifests/$folder/$img" | ConvertFrom-Json
         $manifest.Descriptor.platform = $platform

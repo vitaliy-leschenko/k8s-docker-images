@@ -1,11 +1,8 @@
 param(
     [string]$image = "sigwindowstools/kube-proxy",
-    [switch]$push
+    [switch]$push,
+    [version]$minVersion = "1.17.0"
 )
-
-[int]$minMajor = 1
-[int]$minMinor = 17
-[int]$minBuild = 0
 
 $output="docker"
 if ($push.IsPresent) {
@@ -15,41 +12,45 @@ if ($push.IsPresent) {
 Import-Module "../buildx.psm1"
 Set-Builder
 
-function Build-KubeProxy([string]$tag) 
+function Build-KubeProxy([string]$version) 
 {
     $config = Get-Content ".\buildconfig.json" | ConvertFrom-Json
-    $base = $config.baseimage
 
     [string[]]$items = @()
     [string[]]$bases = @()
-    foreach($map in $config.tagsMap) 
+    foreach($tag in $config.tagsMap) 
     {
-        $bases += "$($base):$($map.source)"
-        $current = "$($image):$tag-$($map.target)"
+        $base = "$($config.baseimage):$($tag.source)"
+        $current = "$($image):$($version)-$($tag.target)"
+        $bases += $base
         $items += $current
-        New-Build -name $current -output $output -args @("BASE=$($base):$($map.source)", "k8sVersion=$tag")
+        New-Build -name $current -output $output -args @("BASE=$base", "k8sVersion=$version")
     }
 
     if ($push.IsPresent)
     {
-        Add-Manifest -name "$($image):$tag" -items $items -bases $bases
+        Push-Manifest -name "$($image):$version" -items $items -bases $bases
     }
-
-    Write-Host
 }
 
-$tags = (curl -L k8s.gcr.io/v2/kube-proxy/tags/list | ConvertFrom-Json).tags
-foreach($tag in $tags)
+$versions = (curl -L k8s.gcr.io/v2/kube-proxy/tags/list | ConvertFrom-Json).tags
+foreach($version in $versions)
 {
-    if ($tag -match "^v(\d+)\.(\d+)\.(\d+)$")
+    if ($version -match "^v(\d+\.\d+\.\d+)$")
     {
-        [int]$major = $Matches[1]
-        [int]$minor = $Matches[2]
-        [int]$build = $Matches[3]
-
-        if (($major -gt $minMajor) -or ($major -eq $minMajor -and $minor -gt $minMinor) -or ($major -eq $minMajor -and $minor -eq $minMinor -and $build -ge $minBuild))
+        $testVersion = [version]$Matches[1]
+        if ($testVersion -ge $minVersion)
         {
-            Build-KubeProxy -tag $tag
+            Write-Host "Build $($image):$($version)"
+            Build-KubeProxy -version $version
         }
+        else
+        {
+            Write-Host "Skip $version because it less than $minVersion."
+        }
+    }
+    else
+    {
+        Write-Host "Skip $version because it isn't release version."
     }
 }

@@ -23,16 +23,18 @@ function New-Build()
         $command = "$command --build-arg=$arg"
     }
     $command = "$command ."
+    Write-Host $command
     Invoke-Expression $command
 }
 
-function Add-Manifest([string]$name, [string[]]$items, [string[]]$bases)
+function Push-Manifest([string]$name, [string[]]$items, [string[]]$bases)
 {
     $command = "docker manifest create $name";
     foreach($item in $items)
     {
         $command = "$command --amend $item"
     }
+    Write-Host $command
     Invoke-Expression $command
 
     for ($i = 0; $i -lt $items.Length; $i++) {
@@ -55,4 +57,4 @@ function Add-Manifest([string]$name, [string[]]$items, [string[]]$bases)
 
 Export-ModuleMember Set-Builder
 Export-ModuleMember New-Build
-Export-ModuleMember Add-Manifest
+Export-ModuleMember Push-Manifest

@@ -25,6 +25,9 @@ function New-Build()
     $command = "$command ."
     Write-Host $command
     Invoke-Expression $command
+    if (-not $?) {
+        throw "Build has been failed"
+    }
 }
 
 function Push-Manifest([string]$name, [string[]]$items, [string[]]$bases)
@@ -36,6 +39,9 @@ function Push-Manifest([string]$name, [string[]]$items, [string[]]$bases)
     }
     Write-Host $command
     Invoke-Expression $command
+    if (-not $?) {
+        throw "Can't create manifest"
+    }
 
     for ($i = 0; $i -lt $items.Length; $i++) {
         $base = $bases[$i]
@@ -53,6 +59,9 @@ function Push-Manifest([string]$name, [string[]]$items, [string[]]$bases)
     }
 
     & docker manifest push $name
+    if (-not $?) {
+        throw "Can't push manifest"
+    }
 }
 
 Export-ModuleMember Set-Builder

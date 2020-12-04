@@ -45,7 +45,7 @@ function Push-Manifest([string]$name, [string[]]$items, [string[]]$bases)
     if (Test-Path "~/.docker/manifests/$folder")
     {
         Write-Warning "Manifest $name already exists and will be overridden."
-        Remove-Item "~/.docker/manifests/$folder" -Recurse
+        & docker manifest rm $name | out-null
     }
 
     $command = "docker manifest create $name";

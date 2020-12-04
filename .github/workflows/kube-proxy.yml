@@ -28,9 +28,9 @@ jobs:
     - name: Build and push images
       if: ${{ github.event_name == 'push' }}
       run: |
-        echo ${{ secrets.AZURE_DOCKER_SECRET }} | docker login vitaliyorg.azurecr.io -u ${{ secrets.AZURE_DOCKER_USERNAME }} --password-stdin
-        ./build.ps1 -push -image vitaliyorg.azurecr.io/k8s/kube-proxy
+        echo ${{ secrets.DOCKER_SECRET }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+        ./build.ps1 -push -image vleschenko/kube-proxy
     - name: Build images (without push)
       if: ${{ github.event_name == 'pull_request' }}
       run: |
-        ./build.ps1 -image vitaliyorg.azurecr.io/k8s/kube-proxy
+        ./build.ps1 -image vleschenko/kube-proxy

@@ -34,3 +34,4 @@ jobs:
       if: ${{ github.event_name == 'pull_request' }}
       run: |
         ./build.ps1 -image vleschenko/kube-proxy
+
